@@ -1,0 +1,25 @@
+# Infraestructura de apoyo (broker y almacenamiento) para la arquitectura objetivo.
+# Referencia: no ejecutado en este entorno. Uso: docker compose up -d
+services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports: ["5672:5672", "15672:15672"]   # AMQP y consola web
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: pfo
+      POSTGRES_PASSWORD: cambiar_esta_clave
+      POSTGRES_DB: tareas
+    ports: ["5432:5432"]
+    volumes: ["pgdata:/var/lib/postgresql/data"]
+  minio:                                   # almacenamiento compatible con la API de S3
+    image: minio/minio
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: pfo
+      MINIO_ROOT_PASSWORD: cambiar_esta_clave
+    ports: ["9090:9000", "9091:9001"]
+    volumes: ["s3data:/data"]
+volumes:
+  pgdata:
+  s3data:
